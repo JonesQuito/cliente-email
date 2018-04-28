@@ -1,14 +1,14 @@
 package com.roboquito.email.cliente.controller;
 
 import com.roboquito.email.cliente.view.CaixaEntradaView;
-import com.roboquito.email.cliente.view.TelaPrincipal;
+import com.roboquito.email.cliente.view.NovaMensagem;
 
-public class TelaPrincipalController {
+public class NovaMensagemController {
 
-    private static TelaPrincipal viewTelaPrincipal;
+    private static NovaMensagem viewTelaPrincipal;
     
     
-    public TelaPrincipalController(TelaPrincipal view){
+    public NovaMensagemController(NovaMensagem view){
         this.viewTelaPrincipal =  view;
     }
 

@@ -1,17 +1,17 @@
 
 package com.roboquito.email.cliente.view;
 
-import com.roboquito.email.cliente.controller.TelaPrincipalController;
+import com.roboquito.email.cliente.controller.NovaMensagemController;
 import java.awt.Insets;
 
 /**
  *
  * @author Jones
  */
-public class TelaPrincipal extends javax.swing.JFrame {
+public class NovaMensagem extends javax.swing.JFrame {
 
-    private TelaPrincipalController controller;
-    public TelaPrincipal() {
+    private NovaMensagemController controller;
+    public NovaMensagem() {
         initComponents();
         setResizable(false);
         setLocationRelativeTo(null);
@@ -19,7 +19,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtMensagem.setAutoscrolls(true);
         txtMensagem.setWrapStyleWord(true);
         txtMensagem.setMargin(new Insets(10, 30, 10, 30));
-        this.controller = new TelaPrincipalController(this);
+        this.controller = new NovaMensagemController(this);
     }
 
 
@@ -302,7 +302,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
   
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaPrincipal().setVisible(true);
+                new NovaMensagem().setVisible(true);
             }
         });
     }

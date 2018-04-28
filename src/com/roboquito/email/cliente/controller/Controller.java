@@ -2,12 +2,12 @@
 package com.roboquito.email.cliente.controller;
 
 import com.roboquito.email.cliente.view.CaixaEntradaView;
-import com.roboquito.email.cliente.view.TelaPrincipal;
+import com.roboquito.email.cliente.view.NovaMensagem;
 
 
 public class Controller {
     private CaixaEntradaView caixaEntrada;
-    private static TelaPrincipal telaPrincipal;
+    private static NovaMensagem telaPrincipal;
     private static Controller controller = null;
     
     
@@ -36,10 +36,11 @@ public class Controller {
         caixaEntrada.dispose();
     }
     
-    
+    /*
     public static void main(String[] args){
-        telaPrincipal = new TelaPrincipal();
+        telaPrincipal = new NovaMensagem();
         telaPrincipal.setVisible(true);
     }
+*/
     
 }
