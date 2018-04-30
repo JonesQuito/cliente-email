@@ -6,6 +6,8 @@
 package com.roboquito.email.cliente.view;
 
 import com.roboquito.email.cliente.controller.DashboardController;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,11 +16,22 @@ import com.roboquito.email.cliente.controller.DashboardController;
 public class Dashboard extends javax.swing.JFrame {
 
     DashboardController dashboardController;
-    public Dashboard() {
+    private static Dashboard instanceDashboard;
+    
+    public static Dashboard getInstance() {
+        if(instanceDashboard == null){
+            instanceDashboard = new Dashboard();
+        }
+        return instanceDashboard;        
+    }
+
+    
+    private Dashboard() {
         initComponents();
         setLocationRelativeTo(this);
         setResizable(false);
         setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         dashboardController = new DashboardController(this);
     }
 
@@ -50,6 +63,8 @@ public class Dashboard extends javax.swing.JFrame {
         lblOpcoes = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(127, 200, 237));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -187,6 +202,9 @@ public class Dashboard extends javax.swing.JFrame {
         lblCaixaEntrada.setText("Caixa entrada");
         lblCaixaEntrada.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         lblCaixaEntrada.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCaixaEntradaMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lblCaixaEntradaMouseEntered(evt);
             }
@@ -202,6 +220,9 @@ public class Dashboard extends javax.swing.JFrame {
         lblNovaMensagem.setText("Nova mensagem");
         lblNovaMensagem.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         lblNovaMensagem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblNovaMensagemMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 mouseMove(evt);
             }
@@ -342,6 +363,16 @@ public class Dashboard extends javax.swing.JFrame {
     private void lblOpcoesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblOpcoesMouseClicked
         
     }//GEN-LAST:event_lblOpcoesMouseClicked
+
+    private void lblCaixaEntradaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCaixaEntradaMouseClicked
+        this.setEnabled(false);
+        new CaixaEntradaView();
+    }//GEN-LAST:event_lblCaixaEntradaMouseClicked
+
+    private void lblNovaMensagemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblNovaMensagemMouseClicked
+        this.setEnabled(false);
+        new NovaMensagem();
+    }//GEN-LAST:event_lblNovaMensagemMouseClicked
 
     /**
      * @param args the command line arguments

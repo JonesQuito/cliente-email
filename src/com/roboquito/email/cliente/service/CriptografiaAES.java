@@ -1,5 +1,6 @@
 package com.roboquito.email.cliente.service;
 
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
@@ -8,33 +9,34 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CriptografiaAES {
 
-    public static SecretKeySpec getKeyAES() throws Exception {
+    public static SecretKey getKeyAES() throws Exception {
         KeyGenerator kgen = KeyGenerator.getInstance("AES");
-        //kgen.init(256); 
+        kgen.init(128); 
         SecretKey skey = kgen.generateKey();
-        byte[] raw = skey.getEncoded();
-        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-        return skeySpec;
+        //byte[] raw = skey.getEncoded();
+        //SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+        return skey;
     }
     
     
-    public static byte[] criptografar(SecretKeySpec skeySpec, String message, Cipher cipher) 
+    public static byte[] criptografar(SecretKeySpec skeySpec, byte[] message, Cipher cipher) 
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, 
-            IllegalBlockSizeException, BadPaddingException {
+            IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         //Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(message.getBytes());
+        byte[] encrypted = cipher.doFinal(message);
         return encrypted;
     }
     
-    public static String decriptografar(SecretKeySpec skeySpec, byte[] encrypted, Cipher cipher)
+    public static String decriptografar(SecretKeySpec skeySpec, byte[] encrypted)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, 
             IllegalBlockSizeException, BadPaddingException{
-        //Cipher cipher = Cipher.getInstance("AES");
+        Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, skeySpec);
         byte[] original = cipher.doFinal(encrypted);
         return new String(original);
