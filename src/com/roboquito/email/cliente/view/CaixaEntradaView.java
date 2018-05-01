@@ -2,6 +2,7 @@
 package com.roboquito.email.cliente.view;
 
 import com.roboquito.email.cliente.controller.CaixaEntradaController;
+import com.roboquito.email.model.Cliente;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -9,16 +10,17 @@ public class CaixaEntradaView extends javax.swing.JFrame {
 
     private CaixaEntradaController caixaEntradaController;
     private Dashboard dashboard;
+    private Cliente usuario = null;
     
     
-    public CaixaEntradaView() {
-        //this.setUndecorated(true);
+    public CaixaEntradaView(Cliente usuario) {
+        this.usuario = usuario;
         initComponents();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         setResizable(false);
         setSize(870, 590);
-        dashboard = Dashboard.getInstance();
+        dashboard = Dashboard.getInstance(this.usuario);
         setLocationRelativeTo(dashboard);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         caixaEntradaController = new CaixaEntradaController(this);
@@ -221,13 +223,14 @@ public class CaixaEntradaView extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the form 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 
                 new CaixaEntradaView();
             }
         });
+*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

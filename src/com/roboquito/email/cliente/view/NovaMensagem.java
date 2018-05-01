@@ -2,6 +2,7 @@
 package com.roboquito.email.cliente.view;
 
 import com.roboquito.email.cliente.controller.NovaMensagemController;
+import com.roboquito.email.model.Cliente;
 import com.roboquito.email.model.Pacote;
 import java.awt.Insets;
 import java.util.Date;
@@ -18,22 +19,26 @@ public class NovaMensagem extends javax.swing.JFrame {
 
     private NovaMensagemController novaMensagemController;
     private Dashboard dashboard;
+    private Cliente usuario = null;
     
     
-    public NovaMensagem() {
+    public NovaMensagem(Cliente usuario) {
         initComponents();
+        this.usuario = usuario;
         setResizable(false);
         setVisible(true);
         setSize(870, 590);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        dashboard = Dashboard.getInstance();
+        dashboard = Dashboard.getInstance(this.usuario);
         setLocationRelativeTo(dashboard);
         txtMensagem.setLineWrap(true);
         txtMensagem.setAutoscrolls(true);
         txtMensagem.setWrapStyleWord(true);
         txtMensagem.setMargin(new Insets(10, 30, 10, 30));
-        this.novaMensagemController = new NovaMensagemController(this);
+        this.novaMensagemController = new NovaMensagemController(this, this.usuario);
+        this.txtRemetente.setText(this.usuario.getEmail());
+        this.lblUsuarioLogado.setText(this.usuario.getEmail());
     }
 
 
@@ -45,7 +50,7 @@ public class NovaMensagem extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        lblUsuarioLogado = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtDestinatario = new javax.swing.JTextField();
@@ -85,10 +90,9 @@ public class NovaMensagem extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(127, 200, 237));
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("jonesdhy@hotmail.com");
+        lblUsuarioLogado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblUsuarioLogado.setForeground(new java.awt.Color(255, 255, 255));
+        lblUsuarioLogado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
@@ -103,7 +107,7 @@ public class NovaMensagem extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblUsuarioLogado, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -111,7 +115,7 @@ public class NovaMensagem extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblUsuarioLogado, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(29, Short.MAX_VALUE))
         );
@@ -340,7 +344,6 @@ public class NovaMensagem extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -354,6 +357,7 @@ public class NovaMensagem extends javax.swing.JFrame {
     private javax.swing.JMenu jmMensagem;
     private javax.swing.JMenuItem jmiNovaMensagem;
     private javax.swing.JMenuItem jmiSincronizar;
+    private javax.swing.JLabel lblUsuarioLogado;
     private javax.swing.JTextField txtAssunto;
     private javax.swing.JTextField txtDestinatario;
     private javax.swing.JTextArea txtMensagem;

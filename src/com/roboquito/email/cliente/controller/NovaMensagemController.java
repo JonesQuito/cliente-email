@@ -6,6 +6,7 @@ import com.roboquito.email.cliente.service.CriptografiaRSA;
 import com.roboquito.email.cliente.service.Util;
 import com.roboquito.email.cliente.view.CaixaEntradaView;
 import com.roboquito.email.cliente.view.NovaMensagem;
+import com.roboquito.email.model.Cliente;
 import com.roboquito.email.model.Pacote;
 import com.roboquito.email.model.ServerMethods;
 import java.io.File;
@@ -18,10 +19,12 @@ import javax.crypto.spec.SecretKeySpec;
 public class NovaMensagemController {
 
     private static NovaMensagem viewTelaPrincipal;
+    private Cliente usuario = null;
     
     
-    public NovaMensagemController(NovaMensagem view){
+    public NovaMensagemController(NovaMensagem view, Cliente usuario){
         this.viewTelaPrincipal =  view;
+        this.usuario = usuario;
     }
 
     public void bloquearTelaPrincipal() {
@@ -33,7 +36,7 @@ public class NovaMensagemController {
     }
     
     public void abrirCaixaEntrada(){
-        new CaixaEntradaView();
+        new CaixaEntradaView(this.usuario);
     }
     
     public void enviarPocote(Pacote pacote) throws Exception{

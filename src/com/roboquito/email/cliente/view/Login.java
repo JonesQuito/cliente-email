@@ -2,6 +2,10 @@
 package com.roboquito.email.cliente.view;
 
 import com.roboquito.email.cliente.controller.LoginController;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 
 public class Login extends javax.swing.JFrame {
@@ -11,7 +15,7 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         this.setUndecorated(true);
         setLocation(580, 280);
-        this.loginController = new LoginController(this);
+        this.loginController = new LoginController(this, null);
         initComponents();
         jtfEmail.setText("jonesdhy@hotmail.com");
         jpfSenha.setText("123456");
@@ -130,7 +134,13 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnLogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogarActionPerformed
-        loginController.logar(jtfEmail.getText(), new String(jpfSenha.getPassword()));
+        try {
+            loginController.logar(jtfEmail.getText(), new String(jpfSenha.getPassword()));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Não foi possível conectar-se ao servidor");
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao receber dados do servidor");
+        }
     }//GEN-LAST:event_btnLogarActionPerformed
 
     /**

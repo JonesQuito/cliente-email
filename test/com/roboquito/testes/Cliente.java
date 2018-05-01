@@ -9,6 +9,7 @@ import com.roboquito.email.cliente.service.Util;
 import com.roboquito.email.model.Pacote;
 import com.roboquito.email.model.ServerMethods;
 import java.security.PrivateKey;
+import java.util.ArrayList;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Cliente {
@@ -25,10 +26,22 @@ public class Cliente {
         Util.enviarObjeto(pacote, socket.getOutputStream());
 
         // Ler o pocote enviado pelo servidor
-        pacote = (Pacote) Util.lerObjecto(socket.getInputStream());
+        ArrayList<Pacote> pacotes = (ArrayList<Pacote>) Util.lerObjecto(socket.getInputStream());
 
         // Ler a chave privada no arquivo e em seguida decripta a chave simétrica recebida do servidor
         PrivateKey privatekey = (PrivateKey) Arquivo.lerObject("C:/keys/private.key");
+        for (Pacote p : pacotes) {
+            byte[] skey = CriptografiaRSA.decriptografa(p.getChaveSimetrica(), privatekey);
+            // Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
+            SecretKeySpec skeyspec = new SecretKeySpec(skey, "AES");
+
+            // Exibe as informações contidas no pacote recebido do servidor
+            System.out.println("Remetente: " + p.getRemetente());
+            System.out.println("Destinatário: " + p.getDestinatario());
+            System.out.println("MENSAGEM RECEBIDA DO SERVIDOR: " + new String(CriptografiaAES.decriptografar(skeyspec, p.getMensagem())));
+
+        }
+/*
         byte[] skey = CriptografiaRSA.decriptografa(pacote.getChaveSimetrica(), privatekey);
 
         // Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
@@ -38,7 +51,7 @@ public class Cliente {
         System.out.println("Remetente: " + pacote.getRemetente());
         System.out.println("Destinatário: " + pacote.getDestinatario());
         System.out.println("MENSAGEM RECEBIDA DO SERVIDOR: " + new String(CriptografiaAES.decriptografar(skeyspec, pacote.getMensagem())));
-
+*/
     }
 
 }
