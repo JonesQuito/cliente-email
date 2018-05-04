@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 public class Arquivo {
 
@@ -115,11 +114,11 @@ public class Arquivo {
     // Ler lista de objetos do Arquivo
      public static ArrayList readListObject(String caminhoDoArquivo) 
              throws FileNotFoundException, IOException, ClassNotFoundException {
-        ArrayList listaDeObjetos = new ArrayList();
+        ArrayList<Object> listaDeObjetos = new ArrayList<>();
         
         FileInputStream arquivoOrigem = new FileInputStream(caminhoDoArquivo);
         ObjectInputStream objetoOrigem = new ObjectInputStream(arquivoOrigem);
-        listaDeObjetos = (ArrayList)objetoOrigem.readObject();
+        listaDeObjetos = (ArrayList<Object>)objetoOrigem.readObject();
         objetoOrigem.close(); 
         
         return listaDeObjetos;

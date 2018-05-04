@@ -2,7 +2,6 @@
 package com.roboquito.email.cliente.controller;
 
 import com.roboquito.email.cliente.view.Dashboard;
-import com.roboquito.email.cliente.view.NovaMensagem;
 
 public class DashboardController {
     
