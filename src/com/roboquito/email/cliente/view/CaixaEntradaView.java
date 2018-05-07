@@ -57,15 +57,8 @@ public class CaixaEntradaView extends javax.swing.JFrame {
 
     public void atualizarCaixaEntrada() {
 
-        //PrivateKey privatekey = (PrivateKey) Arquivo.lerObject("C:/keys/private.key");
         for (Pacote p : pacotesRepository.getAllPackages()) {
-            //byte[] skey = CriptografiaRSA.decriptografa(p.getChaveSimetrica(), privatekey);
-            // Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
-            //SecretKeySpec skeyspec = new SecretKeySpec(skey, "AES");
-            //p.setMensagem(CriptografiaAES.decriptografar(skeyspec, p.getMensagem()).getBytes());
-
             adicionarEmailTabela(p); // Preencher a tabela de emails na caixa de entrada
-
         }
     }
 
@@ -117,6 +110,9 @@ public class CaixaEntradaView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenuTabelaEmails = new javax.swing.JPopupMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jButtonAbrirNaHome = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -135,6 +131,12 @@ public class CaixaEntradaView extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         btnEncaminhar = new javax.swing.JButton();
         btnResponder = new javax.swing.JButton();
+
+        jMenuItem1.setText("jMenuItem1");
+        jPopupMenuTabelaEmails.add(jMenuItem1);
+
+        jMenuItem2.setText("jMenuItem2");
+        jPopupMenuTabelaEmails.add(jMenuItem2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(204, 255, 255));
@@ -230,6 +232,9 @@ public class CaixaEntradaView extends javax.swing.JFrame {
         jTableEmails.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTableEmailsMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTableEmailsMouseReleased(evt);
             }
         });
         jScrollPane1.setViewportView(jTableEmails);
@@ -371,6 +376,12 @@ public class CaixaEntradaView extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnResponderActionPerformed
 
+    private void jTableEmailsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableEmailsMouseReleased
+        if(evt.isPopupTrigger()){
+            jPopupMenuTabelaEmails.show(this, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_jTableEmailsMouseReleased
+
     /**
      * @param args the command line arguments
      */
@@ -419,9 +430,12 @@ public class CaixaEntradaView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPopupMenu jPopupMenuTabelaEmails;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTableEmails;
