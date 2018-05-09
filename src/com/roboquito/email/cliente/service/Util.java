@@ -5,8 +5,34 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Util {
+   private static Socket conexao = null;
+   
+   public static Socket getSocket() throws IOException{
+       if(conexao == null){
+           conexao = new Socket("127.0.0.1", 5000);
+       }
+       return conexao;
+   }
+    
+    //Função para criar hash da mensagem informada
+	public static String md5(String mensagem){
+		String sen = "";
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		BigInteger hash = new BigInteger(1, md.digest(mensagem.getBytes()));
+		sen = hash.toString(16);			
+		return sen;
+	}
 
     public static Object lerObjecto(InputStream inputStream) throws IOException, ClassNotFoundException {
         Object objetoRetorno = null;

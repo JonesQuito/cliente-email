@@ -9,6 +9,7 @@ import com.roboquito.email.cliente.service.Util;
 import com.roboquito.email.model.Pacote;
 import com.roboquito.email.model.ServerMethods;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -31,17 +32,30 @@ public class Cliente {
         // Ler a chave privada no arquivo e em seguida decripta a chave simétrica recebida do servidor
         PrivateKey privatekey = (PrivateKey) Arquivo.lerObject("C:/keys/private.key");
         for (Pacote p : pacotes) {
-            byte[] skey = CriptografiaRSA.decriptografa(p.getChaveSimetrica(), privatekey);
-            // Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
-            SecretKeySpec skeyspec = new SecretKeySpec(skey, "AES");
+            if (p.getHashCriptografado() != null) {
+                byte[] skey = CriptografiaRSA.decriptografa(p.getChaveSimetrica(), privatekey);
+                // Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
+                SecretKeySpec skeyspec = new SecretKeySpec(skey, "AES");
 
-            // Exibe as informações contidas no pacote recebido do servidor
-            System.out.println("Remetente: " + p.getRemetente());
-            System.out.println("Destinatário: " + p.getDestinatario());
-            System.out.println("MENSAGEM RECEBIDA DO SERVIDOR: " + new String(CriptografiaAES.decriptografar(skeyspec, p.getMensagem())));
+                // Exibe as informações contidas no pacote recebido do servidor
+                System.out.println("Remetente: " + p.getRemetente());
+                System.out.println("Destinatário: " + p.getDestinatario());
+                System.out.println("MENSAGEM RECEBIDA DO SERVIDOR: " + new String(CriptografiaAES.decriptografar(skeyspec, p.getMensagem())));
+
+                PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");
+             
+                
+                byte[] hashCriptografado = CriptografiaRSA.decriptografa(p.getHashCriptografado(), publickey);
+                System.out.println("Assinatura: " + new String(hashCriptografado));
+                String mensagemClara = Util.md5(new String(CriptografiaAES.decriptografar(skeyspec, p.getMensagem())));
+                if(mensagemClara.equals(new String(hashCriptografado))){
+                    System.out.println("Autenticação confirmada ");
+                }
+
+            }
 
         }
-/*
+        /*
         byte[] skey = CriptografiaRSA.decriptografa(pacote.getChaveSimetrica(), privatekey);
 
         // Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
@@ -51,7 +65,7 @@ public class Cliente {
         System.out.println("Remetente: " + pacote.getRemetente());
         System.out.println("Destinatário: " + pacote.getDestinatario());
         System.out.println("MENSAGEM RECEBIDA DO SERVIDOR: " + new String(CriptografiaAES.decriptografar(skeyspec, pacote.getMensagem())));
-*/
+         */
     }
 
 }

@@ -56,11 +56,45 @@ public class CriptografiaRSA {
     } 
     return cipherText;
   }
+  
+  /**
+   * Criptografa o texto puro usando chave privada.
+   */
+  public static byte[] criptografa(byte[] texto, PrivateKey chave) {
+    byte[] cipherText = null;
+    try {
+      final Cipher cipher = Cipher.getInstance(ALGORITHM);
+      // Criptografa o texto puro usando a chave Púlica
+      cipher.init(Cipher.ENCRYPT_MODE, chave);
+      cipherText = cipher.doFinal(texto);
+    } catch (Exception e) {
+      e.printStackTrace();
+    } 
+    return cipherText;
+  }
  
   /**
    * Decriptografa o texto puro usando chave privada.
    */
   public static byte[] decriptografa(byte[] texto, PrivateKey chave) {
+    byte[] dectyptedText;  
+    try {
+      final Cipher cipher = Cipher.getInstance(ALGORITHM);
+      // Decriptografa o texto puro usando a chave Privada
+      cipher.init(Cipher.DECRYPT_MODE, chave);
+      dectyptedText = cipher.doFinal(texto);
+      return dectyptedText;
+ 
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return null;
+  }
+  
+  /**
+   * Decriptografa o texto puro usando chave public.
+   */
+  public static byte[] decriptografa(byte[] texto, PublicKey chave) {
     byte[] dectyptedText;  
     try {
       final Cipher cipher = Cipher.getInstance(ALGORITHM);

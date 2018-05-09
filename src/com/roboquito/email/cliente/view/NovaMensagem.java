@@ -306,6 +306,7 @@ public final class NovaMensagem extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
+
         Pacote pacote = new Pacote();
         pacote.setAssunto(txtAssunto.getText());
         pacote.setDataCriacao(new Date());

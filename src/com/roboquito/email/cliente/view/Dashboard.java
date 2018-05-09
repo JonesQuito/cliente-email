@@ -10,8 +10,10 @@ import com.roboquito.email.model.Cliente;
 import com.roboquito.email.model.Pacote;
 import com.roboquito.email.model.ServerMethods;
 import java.awt.CardLayout;
+import java.io.IOException;
 import java.net.Socket;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -19,7 +21,6 @@ import java.util.logging.Logger;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public final class Dashboard extends javax.swing.JFrame {
@@ -31,13 +32,19 @@ public final class Dashboard extends javax.swing.JFrame {
     PainelCaixaEntrada painelCaixaEntrada = new PainelCaixaEntrada();
     PainelDashboard painelDashboard = new PainelDashboard();
     DefaultTableModel dtmEmails;
+    
 
+    public static Dashboard getCurrencInstance() {
+        return instanceDashboard;
+    }
+    
     public static Dashboard getInstance(Cliente usuario) {
         if (instanceDashboard == null) {
             instanceDashboard = new Dashboard(usuario);
         }
         return instanceDashboard;
     }
+    
 
     private Dashboard(Cliente usuario) {
         initComponents();
@@ -122,11 +129,23 @@ public final class Dashboard extends javax.swing.JFrame {
             //Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
             SecretKeySpec skeyspec = new SecretKeySpec(skey, "AES");
 
+            //##############################################
+            PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");
+            
+            byte[] hashDecriptografado = CriptografiaRSA.decriptografa(pacote.getHashCriptografado(), publickey);
+            //System.out.println("Hash decriptografado: " + new String(hashCriptografado));
+            //##############################################
+            String hashMensagem = Util.md5(new String(CriptografiaAES.decriptografar(skeyspec, pacote.getMensagem())));
+            if (hashMensagem.equals(new String(hashDecriptografado))) {
+                JOptionPane.showMessageDialog(this, "Autenticidade confirmada");
+            }
+
             txtMensagem.setText("");
             txtMensagem.append("ASSUNTO: " + pacote.getAssunto());
             txtMensagem.append("\nREMETENTE: " + pacote.getRemetente());
             txtMensagem.append("\nDATA: " + pacote.getDataCriacao());
             txtMensagem.append("\n\nMENSAGEM:\n" + new String(CriptografiaAES.decriptografar(skeyspec, pacote.getMensagem()).getBytes()));
+            txtMensagem.append("\n\n\nASSINATURA:\n" + new String(hashDecriptografado));
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Não foi possível obter a chave para decifrar a mensagem: ");
@@ -138,6 +157,7 @@ public final class Dashboard extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jpConteudo = new javax.swing.JPanel();
         jpDashboard = new javax.swing.JPanel();
@@ -167,6 +187,7 @@ public final class Dashboard extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jpOpcoes = new javax.swing.JPanel();
+        jbPublicarChave = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         lblCaixaEntrada = new javax.swing.JLabel();
@@ -174,20 +195,34 @@ public final class Dashboard extends javax.swing.JFrame {
         lblContatos = new javax.swing.JLabel();
         lblOpcoes = new javax.swing.JLabel();
         lblDashboard = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jmUsuario = new javax.swing.JMenu();
+        jmiTrocarUsuario = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(127, 200, 237));
 
+        jLabel10.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("CriptoMail");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(373, 373, 373))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 38, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(128, 128, 128));
@@ -465,15 +500,28 @@ public final class Dashboard extends javax.swing.JFrame {
 
         jpOpcoes.setBackground(new java.awt.Color(255, 255, 255));
 
+        jbPublicarChave.setText("Publicar Chave Pública");
+        jbPublicarChave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbPublicarChaveActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpOpcoesLayout = new javax.swing.GroupLayout(jpOpcoes);
         jpOpcoes.setLayout(jpOpcoesLayout);
         jpOpcoesLayout.setHorizontalGroup(
             jpOpcoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 676, Short.MAX_VALUE)
+            .addGroup(jpOpcoesLayout.createSequentialGroup()
+                .addGap(87, 87, 87)
+                .addComponent(jbPublicarChave)
+                .addContainerGap(450, Short.MAX_VALUE))
         );
         jpOpcoesLayout.setVerticalGroup(
             jpOpcoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 464, Short.MAX_VALUE)
+            .addGroup(jpOpcoesLayout.createSequentialGroup()
+                .addGap(187, 187, 187)
+                .addComponent(jbPublicarChave)
+                .addContainerGap(254, Short.MAX_VALUE))
         );
 
         jpConteudo.add(jpOpcoes, "cardOpcoes");
@@ -609,7 +657,7 @@ public final class Dashboard extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(lblDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -624,6 +672,23 @@ public final class Dashboard extends javax.swing.JFrame {
                     .addComponent(jpConteudo, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0))
         );
+
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jmUsuario.setText("Usuário");
+
+        jmiTrocarUsuario.setText("Trocar usuário");
+        jmiTrocarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiTrocarUsuarioActionPerformed(evt);
+            }
+        });
+        jmUsuario.add(jmiTrocarUsuario);
+
+        jMenuBar1.add(jmUsuario);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -681,6 +746,18 @@ public final class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_lblOpcoesMouseClicked
 
     private void lblCaixaEntradaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCaixaEntradaMouseClicked
+        pacotesRepository.clean();
+        sincronizarServidor();
+        lblTotalEmails.setText(Integer.toString(pacotesRepository.getAllPackages().size()));
+
+        clearTable();
+        try {
+            atualizarCaixaEntrada();
+
+            // Configura a largura da segunda coluna
+        } catch (Exception ex) {
+            Logger.getLogger(CaixaEntradaView.class.getName()).log(Level.SEVERE, null, ex);
+        }
         CardLayout cl = (CardLayout) jpConteudo.getLayout();
         cl.show(jpConteudo, "cardCaixaEntrada");
 
@@ -717,7 +794,6 @@ public final class Dashboard extends javax.swing.JFrame {
 
     private void jTableEmailsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableEmailsMouseClicked
         if (evt.getClickCount() == 2) {
-
             abrirMensagem();
         }
     }//GEN-LAST:event_jTableEmailsMouseClicked
@@ -725,11 +801,30 @@ public final class Dashboard extends javax.swing.JFrame {
     private void jTableEmailsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableEmailsMouseReleased
         if (jTableEmails.getSelectedRow() != -1) {
             if (evt.isPopupTrigger()) {
-                   //Implementar
+                //Implementar
             }
         }
 
     }//GEN-LAST:event_jTableEmailsMouseReleased
+
+    private void jmiTrocarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiTrocarUsuarioActionPerformed
+        new Login();
+    }//GEN-LAST:event_jmiTrocarUsuarioActionPerformed
+
+    private void jbPublicarChaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPublicarChaveActionPerformed
+        try {
+            PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");
+            
+            this.usuario.setPublickey(publickey);
+            this.usuario.setMetodo(ServerMethods.PUBLICAR_CHAVE);
+            
+            Util.enviarObjeto(this.usuario, Util.getSocket().getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jbPublicarChaveActionPerformed
 
     public static void main(String args[]) {
 
@@ -763,6 +858,7 @@ public final class Dashboard extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -771,6 +867,8 @@ public final class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -782,6 +880,9 @@ public final class Dashboard extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JButton jbPublicarChave;
+    private javax.swing.JMenu jmUsuario;
+    private javax.swing.JMenuItem jmiTrocarUsuario;
     private javax.swing.JPanel jpCaixaEntrada;
     private javax.swing.JPanel jpContatos;
     private javax.swing.JPanel jpConteudo;
