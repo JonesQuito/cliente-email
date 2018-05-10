@@ -10,6 +10,7 @@ import com.roboquito.email.model.Cliente;
 import com.roboquito.email.model.Pacote;
 import com.roboquito.email.model.ServerMethods;
 import java.awt.CardLayout;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.PrivateKey;
@@ -32,19 +33,17 @@ public final class Dashboard extends javax.swing.JFrame {
     PainelCaixaEntrada painelCaixaEntrada = new PainelCaixaEntrada();
     PainelDashboard painelDashboard = new PainelDashboard();
     DefaultTableModel dtmEmails;
-    
 
     public static Dashboard getCurrencInstance() {
         return instanceDashboard;
     }
-    
+
     public static Dashboard getInstance(Cliente usuario) {
         if (instanceDashboard == null) {
             instanceDashboard = new Dashboard(usuario);
         }
         return instanceDashboard;
     }
-    
 
     private Dashboard(Cliente usuario) {
         initComponents();
@@ -130,8 +129,38 @@ public final class Dashboard extends javax.swing.JFrame {
             SecretKeySpec skeyspec = new SecretKeySpec(skey, "AES");
 
             //##############################################
-            PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");
-            
+            //PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");/*
+            /*
+             Cliente c = new Cliente();
+        c.setEmail(pacote.getDestinatario());
+        c.setMetodo(ServerMethods.GET_PUBLIC_KEY);
+        
+        Util.enviarObjeto(c, Util.getSocket().getOutputStream());
+        
+        PublicKey publicKey = (PublicKey)Util.lerObjecto(Util.getSocket().getInputStream());
+        
+        if(publicKey != null){
+            hashCriptografado = CriptografiaRSA.decriptografa(hashCriptografado, publicKey);
+            System.out.println("Hash decriptografado: " + new String(hashCriptografado));
+        }else{
+            File arquivo = Arquivo.abrirArquivo2("Escolher chave pública do destinatário");
+            publicKey = (PublicKey) Arquivo.lerObject(arquivo.getAbsolutePath());
+        }*/
+            //#############################################
+            Cliente c = new Cliente();
+            c.setEmail(pacote.getDestinatario());
+            c.setMetodo(ServerMethods.GET_PUBLIC_KEY);
+
+            Socket socket = new Socket("127.0.0.1", 5000);
+            Util.enviarObjeto(c, socket.getOutputStream());
+            PublicKey publickey = (PublicKey) Util.lerObjecto(socket.getInputStream());
+
+            if (publickey == null) {
+                File arquivo = Arquivo.abrirArquivo2("Informe onde está a chave pública do remetente!");
+                publickey = (PublicKey) Arquivo.lerObject(arquivo.getAbsolutePath());
+            }
+            //#############################################
+
             byte[] hashDecriptografado = CriptografiaRSA.decriptografa(pacote.getHashCriptografado(), publickey);
             //System.out.println("Hash decriptografado: " + new String(hashCriptografado));
             //##############################################
@@ -188,6 +217,7 @@ public final class Dashboard extends javax.swing.JFrame {
         jTable2 = new javax.swing.JTable();
         jpOpcoes = new javax.swing.JPanel();
         jbPublicarChave = new javax.swing.JButton();
+        jbGerarParChaves = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         lblCaixaEntrada = new javax.swing.JLabel();
@@ -507,19 +537,30 @@ public final class Dashboard extends javax.swing.JFrame {
             }
         });
 
+        jbGerarParChaves.setText("Gerar Par de Chaves");
+        jbGerarParChaves.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbGerarParChavesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpOpcoesLayout = new javax.swing.GroupLayout(jpOpcoes);
         jpOpcoes.setLayout(jpOpcoesLayout);
         jpOpcoesLayout.setHorizontalGroup(
             jpOpcoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpOpcoesLayout.createSequentialGroup()
                 .addGap(87, 87, 87)
-                .addComponent(jbPublicarChave)
+                .addGroup(jpOpcoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jbPublicarChave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbGerarParChaves, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(450, Short.MAX_VALUE))
         );
         jpOpcoesLayout.setVerticalGroup(
             jpOpcoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpOpcoesLayout.createSequentialGroup()
-                .addGap(187, 187, 187)
+                .addGap(114, 114, 114)
+                .addComponent(jbGerarParChaves)
+                .addGap(50, 50, 50)
                 .addComponent(jbPublicarChave)
                 .addContainerGap(254, Short.MAX_VALUE))
         );
@@ -814,17 +855,28 @@ public final class Dashboard extends javax.swing.JFrame {
     private void jbPublicarChaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPublicarChaveActionPerformed
         try {
             PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");
-            
+
             this.usuario.setPublickey(publickey);
             this.usuario.setMetodo(ServerMethods.PUBLICAR_CHAVE);
-            
-            Util.enviarObjeto(this.usuario, Util.getSocket().getOutputStream());
+
+            Socket socket = new Socket("127.0.0.1", 5000);
+            Util.enviarObjeto(this.usuario, socket.getOutputStream());
         } catch (IOException ex) {
             Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jbPublicarChaveActionPerformed
+
+    private void jbGerarParChavesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGerarParChavesActionPerformed
+
+        // Método responável por gerar um par de chaves usando o algoritmo RSA e
+        // armazena as chaves nos seus respectivos arquivos.
+        CriptografiaRSA.geraChave(this.usuario.getEmail().split("@")[0]);
+        JOptionPane.showMessageDialog(this, "Chave pública e privada foram geradas com êxito.\n"+
+                "Foram salvas na pasta: " +CriptografiaRSA.PATH_CHAVE_PRIVADA);
+
+    }//GEN-LAST:event_jbGerarParChavesActionPerformed
 
     public static void main(String args[]) {
 
@@ -880,6 +932,7 @@ public final class Dashboard extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JButton jbGerarParChaves;
     private javax.swing.JButton jbPublicarChave;
     private javax.swing.JMenu jmUsuario;
     private javax.swing.JMenuItem jmiTrocarUsuario;

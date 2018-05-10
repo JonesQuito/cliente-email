@@ -22,6 +22,18 @@ public class Arquivo {
     public static File abrirArquivo() {
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        //fc.setDialogTitle();
+        if(fc.showOpenDialog(null)== 1){
+            return null;
+        }
+        File file = fc.getSelectedFile();
+        return file;
+    }
+    
+    public static File abrirArquivo2(String titulo) {
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.setDialogTitle(titulo);
         if(fc.showOpenDialog(null)== 1){
             return null;
         }

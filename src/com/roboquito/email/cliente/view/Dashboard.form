@@ -680,7 +680,10 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="87" max="-2" attributes="0"/>
-                          <Component id="jbPublicarChave" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="jbPublicarChave" max="32767" attributes="0"/>
+                              <Component id="jbGerarParChaves" max="32767" attributes="0"/>
+                          </Group>
                           <EmptySpace pref="450" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -688,7 +691,9 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="187" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="114" max="-2" attributes="0"/>
+                          <Component id="jbGerarParChaves" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                           <Component id="jbPublicarChave" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="254" max="32767" attributes="0"/>
                       </Group>
@@ -702,6 +707,14 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbPublicarChaveActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="jbGerarParChaves">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Gerar Par de Chaves"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbGerarParChavesActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
