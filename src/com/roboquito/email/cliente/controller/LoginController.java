@@ -20,7 +20,8 @@ public class LoginController {
     }
 
     public void logar(String email, String senha) throws IOException, ClassNotFoundException {
-        Socket socket = new Socket("127.0.0.1", 5000);
+        //Socket socket = new Socket("127.0.0.1", 5000);
+        Socket socket = new Socket("192.168.5.112", 5000);
         Cliente cliente = new Cliente();
         cliente.setEmail(email);
         cliente.setSenha(senha);
