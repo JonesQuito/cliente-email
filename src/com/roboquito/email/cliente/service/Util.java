@@ -12,8 +12,11 @@ import java.security.NoSuchAlgorithmException;
 
 public class Util {
 
+    private static String host = ConfigurationServer.getHost();
+    private static int port = ConfigurationServer.getPort();
+    
     public static Socket getSocket() throws IOException {
-        return new Socket("127.0.0.1", 5000);
+        return new Socket(host, port);
     }
 
     //Função para criar hash da mensagem informada

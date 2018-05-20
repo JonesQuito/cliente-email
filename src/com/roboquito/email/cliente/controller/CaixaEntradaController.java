@@ -16,11 +16,7 @@ public class CaixaEntradaController {
     public CaixaEntradaController(CaixaEntradaView viewCaixaEntrada){
         viewCaixaEntrada = viewCaixaEntrada;
     }
-    
-    
- 
-        
-    
+
     public void abrirCaixaEntrada(){
         viewCaixaEntrada = new CaixaEntradaView(this.usuario);
         viewCaixaEntrada.setVisible(true);

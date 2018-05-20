@@ -2,7 +2,12 @@
 package com.roboquito.email.cliente.view;
 
 import com.roboquito.email.cliente.controller.LoginController;
+import com.roboquito.email.cliente.service.ConfigurationServer;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -19,6 +24,13 @@ public class Login extends javax.swing.JFrame {
         initComponents();
         jtfEmail.setText("jonesdhy@hotmail.com");
         jpfSenha.setText("123456");
+ 
+        try {
+            ConfigurationServer.setConfiguration();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Não foi possível definir as configurções do servidor");
+        }
+
     }
 
 

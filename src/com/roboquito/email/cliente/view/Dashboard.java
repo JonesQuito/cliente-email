@@ -80,7 +80,7 @@ public final class Dashboard extends javax.swing.JFrame {
 
         try {
             // Estabelece conexão via socket e envia o objeto pacate para o servidor
-            Socket socket = new Socket("127.0.0.1", 5000);
+            Socket socket = Util.getSocket();
             Util.enviarObjeto(pacote, socket.getOutputStream());
 
             // Ler o pocote enviado pelo servidor
@@ -151,7 +151,7 @@ public final class Dashboard extends javax.swing.JFrame {
             c.setEmail(pacote.getDestinatario());
             c.setMetodo(ServerMethods.GET_PUBLIC_KEY);
 
-            Socket socket = new Socket("127.0.0.1", 5000);
+            Socket socket = Util.getSocket();
             Util.enviarObjeto(c, socket.getOutputStream());
             PublicKey publickey = (PublicKey) Util.lerObjecto(socket.getInputStream());
 
@@ -859,7 +859,7 @@ public final class Dashboard extends javax.swing.JFrame {
             this.usuario.setPublickey(publickey);
             this.usuario.setMetodo(ServerMethods.PUBLICAR_CHAVE);
 
-            Socket socket = new Socket("127.0.0.1", 5000);
+            Socket socket = Util.getSocket();
             Util.enviarObjeto(this.usuario, socket.getOutputStream());
         } catch (IOException ex) {
             Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);

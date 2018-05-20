@@ -60,7 +60,7 @@ public class NovaMensagemController {
         c.setEmail(pacote.getDestinatario());
         c.setMetodo(ServerMethods.GET_PUBLIC_KEY);
         
-        Socket socket = new Socket("127.0.0.1", 5000);
+        Socket socket = Util.getSocket();
         Util.enviarObjeto(c, socket.getOutputStream());
         PublicKey publicKey = (PublicKey)Util.lerObjecto(socket.getInputStream());
         
@@ -92,7 +92,7 @@ public class NovaMensagemController {
         pacote.setChaveSimetrica(CriptografiaRSA.criptografa(skey.getEncoded(), publicKey));
         pacote.setMetodo(ServerMethods.SAVE_OBJECT);
 
-        socket = new Socket("127.0.0.1", 5000);
+        socket = Util.getSocket();
 
         Util.enviarObjeto(pacote, socket.getOutputStream());
 
