@@ -9,7 +9,8 @@
 `https://github.com/JonesQuito/cliente-email.git`
 
 ## Para rodar o projeto
-...
+##### Basta executar o .jar disponível no diretório dist
+OBS: A aplicação vai pedir usuário e senha, portanto é necessário criar antes um usuário no servidor de email. A aplicação serve está disponível no seguinte repositório `https://github.com/JonesQuito/servidor-email.git`. Fazer o clone e iniciar a plicação conforme orientação disponível no README.md da mesma.
 
 ## Conceitos envolvidos
 - Criptografia
