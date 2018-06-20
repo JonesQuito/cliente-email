@@ -17,6 +17,10 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * 
+ * @author Jones
+ */
 public class NovaMensagemController {
 
     private static NovaMensagem viewTelaPrincipal;
@@ -39,19 +43,27 @@ public class NovaMensagemController {
         new CaixaEntradaView(this.usuario);
     }
 
+    /**
+     * 
+     * @param pacote
+     * @throws Exception 
+     */
     public void enviarPocote(Pacote pacote) throws Exception {
 
         byte[] hashCriptografado = null;
         // Calculo do hash da mensagem
         String hash = Util.md5(new String(pacote.getMensagem()));
 
-        /*
-        Criptografado o hash com a chave privada do remetente
-        Isso funciona como uma assinatura, pois quando o destinatário receber o
-        hash, se ele poder ser decriptografado com a chave pública do remetente
-        é sinal de que foi reamente enviada por quem diz está enviando
+        /**
+         * Criptografado o hash com a chave privada do remetente
+         * Isso funciona como uma assinatura, pois quando o destinatário receber o
+         * hash, se ele poder ser decriptografado com a chave pública do remetente
+         * é sinal de que foi reamente enviada por quem diz está enviando
         */
-        PrivateKey privatekey = (PrivateKey) Arquivo.lerObject("C:/keys/private.key");
+     
+        String path = CriptografiaRSA.PATH_CHAVE.concat(this.usuario.getEmail().split("@")[0]).concat("private.key");
+        System.out.println(path);
+        PrivateKey privatekey = (PrivateKey) Arquivo.lerObject(path);
         hashCriptografado = CriptografiaRSA.criptografa(hash.getBytes(), privatekey);
         pacote.setHashCriptografado(hashCriptografado);
 
@@ -68,20 +80,8 @@ public class NovaMensagemController {
         Socket socket = Util.getSocket();
         Util.enviarObjeto(c, socket.getOutputStream());
         PublicKey publicKey = (PublicKey)Util.lerObjecto(socket.getInputStream());
+        System.out.println("passou aqui");
         
-        /*
-        Verifica se achave pública do destinatário foi obtida junto ao servidor
-        caso a busca no servidor não obtenha sucesso, é solicitado ao usuário que
-        informe onde está a chave pública do destinatário
-        */
-        if(publicKey != null){
-            hashCriptografado = CriptografiaRSA.decriptografa(hashCriptografado, publicKey);
-            System.out.println("Hash decriptografado: " + new String(hashCriptografado));
-        }else{
-            File arquivo = Arquivo.abrirArquivo2("Escolher chave pública do destinatário");
-            publicKey = (PublicKey) Arquivo.lerObject(arquivo.getAbsolutePath());
-        }
-
         /*
         Gera uma chave simétrica e criptografa a mensagem com essa chave
         */
@@ -89,6 +89,18 @@ public class NovaMensagemController {
         SecretKeySpec skeyspec = new SecretKeySpec(skey.getEncoded(), "AES");
         Cipher cipher = Cipher.getInstance("AES");
         pacote.setMensagem(CriptografiaAES.criptografar(skeyspec, pacote.getMensagem(), cipher));
+        
+        
+        /*
+        Verifica se achave pública do destinatário foi obtida junto ao servidor
+        caso a busca no servidor não obtenha sucesso, é solicitado ao usuário que
+        informe onde está a chave pública do destinatário
+        */
+        if(publicKey == null){
+            File arquivo = Arquivo.abrirArquivo2("Escolher chave pública do destinatário");
+            publicKey = (PublicKey) Arquivo.lerObject(arquivo.getAbsolutePath());
+        }
+
 
         /*
         Usa a chave pública do destinatário para criptografar a chave simétrica

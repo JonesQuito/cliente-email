@@ -122,48 +122,45 @@ public final class Dashboard extends javax.swing.JFrame {
         Date dataCriacao = (Date) jTableEmails.getValueAt(jTableEmails.getSelectedRow(), 2);
         Pacote pacote = pacotesRepository.getPacotesByDate(dataCriacao);
 
-        try {
-            PrivateKey privatekey = (PrivateKey) Arquivo.lerObject("C:/keys/private.key");
+        try {  
+            /*
+            Usa a chave simétrica do destinatário, armazenada localmente, para decriptografar
+            a chave simétrica usada na criptografia da mensagem recebida.
+            */
+            String path = CriptografiaRSA.PATH_CHAVE.concat(this.usuario.getEmail().split("@")[0]).concat("private.key");
+            
+            //String path = "C:/keys/".concat(this.usuario.getEmail().split("@")[0]).concat("private.key");
+            PrivateKey privatekey = (PrivateKey) Arquivo.lerObject(path);
             byte[] skey = CriptografiaRSA.decriptografa(pacote.getChaveSimetrica(), privatekey);
-            //Instancia uma SecretKeySpec apartir da chave simétrica recebida do servidor
             SecretKeySpec skeyspec = new SecretKeySpec(skey, "AES");
 
-            //##############################################
-            //PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");/*
             /*
-             Cliente c = new Cliente();
-        c.setEmail(pacote.getDestinatario());
-        c.setMetodo(ServerMethods.GET_PUBLIC_KEY);
-        
-        Util.enviarObjeto(c, Util.getSocket().getOutputStream());
-        
-        PublicKey publicKey = (PublicKey)Util.lerObjecto(Util.getSocket().getInputStream());
-        
-        if(publicKey != null){
-            hashCriptografado = CriptografiaRSA.decriptografa(hashCriptografado, publicKey);
-            System.out.println("Hash decriptografado: " + new String(hashCriptografado));
-        }else{
-            File arquivo = Arquivo.abrirArquivo2("Escolher chave pública do destinatário");
-            publicKey = (PublicKey) Arquivo.lerObject(arquivo.getAbsolutePath());
-        }*/
-            //#############################################
+            Solicita ao servidor a chave pública do remetente, pois a mesma será usada
+            para decriptografar o hash da mensagem afim de verificar a autenticidade do remetente
+            */
             Cliente c = new Cliente();
-            c.setEmail(pacote.getDestinatario());
+            c.setEmail(pacote.getRemetente());
             c.setMetodo(ServerMethods.GET_PUBLIC_KEY);
-
             Socket socket = Util.getSocket();
             Util.enviarObjeto(c, socket.getOutputStream());
             PublicKey publickey = (PublicKey) Util.lerObjecto(socket.getInputStream());
 
+            /*
+            Verifica se a chave solicitada ao servidor foir retornada, caso a resposta
+            seja negativa, solicita que o usuário informe onde está a chave pública
+            do remetente
+            */
             if (publickey == null) {
                 File arquivo = Arquivo.abrirArquivo2("Informe onde está a chave pública do remetente!");
                 publickey = (PublicKey) Arquivo.lerObject(arquivo.getAbsolutePath());
             }
-            //#############################################
+            
 
+            /*
+            Decriptografa o hash da mensagem recebido e compara com o hash da mensagem
+            clara para verificar se o conteúdo foi alterado
+            */
             byte[] hashDecriptografado = CriptografiaRSA.decriptografa(pacote.getHashCriptografado(), publickey);
-            //System.out.println("Hash decriptografado: " + new String(hashCriptografado));
-            //##############################################
             String hashMensagem = Util.md5(new String(CriptografiaAES.decriptografar(skeyspec, pacote.getMensagem())));
             if (hashMensagem.equals(new String(hashDecriptografado))) {
                 JOptionPane.showMessageDialog(this, "Autenticidade confirmada");
@@ -854,7 +851,8 @@ public final class Dashboard extends javax.swing.JFrame {
 
     private void jbPublicarChaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPublicarChaveActionPerformed
         try {
-            PublicKey publickey = (PublicKey) Arquivo.lerObject("C:/keys/public.key");
+            String path = CriptografiaRSA.PATH_CHAVE.concat(this.usuario.getEmail().split("@")[0]).concat("public.key");
+            PublicKey publickey = (PublicKey) Arquivo.lerObject(path);
 
             this.usuario.setPublickey(publickey);
             this.usuario.setMetodo(ServerMethods.PUBLICAR_CHAVE);
@@ -874,7 +872,7 @@ public final class Dashboard extends javax.swing.JFrame {
         // armazena as chaves nos seus respectivos arquivos.
         CriptografiaRSA.geraChave(this.usuario.getEmail().split("@")[0]);
         JOptionPane.showMessageDialog(this, "Chave pública e privada foram geradas com êxito.\n"+
-                "Foram salvas na pasta: " +CriptografiaRSA.PATH_CHAVE_PRIVADA);
+                "Foram salvas na pasta: " +CriptografiaRSA.PATH_CHAVE);
 
     }//GEN-LAST:event_jbGerarParChavesActionPerformed
 

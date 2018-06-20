@@ -12,16 +12,20 @@ import javax.crypto.Cipher;
 public class CriptografiaRSA {
 
     public static final String ALGORITHM = "RSA";
+ 
 
     /**
      * Local da chave privada no sistema de arquivos.
      */
-    public static final String PATH_CHAVE_PRIVADA = "C:/keys/";
+    public static String PATH_CHAVE;
+    static{
+        if(System.getProperty("os.name").startsWith("Windows")){
+            PATH_CHAVE = "C:/keys/";
+        }else{
+            PATH_CHAVE = "/home/keys/";
+        }
+    }
 
-    /**
-     * Local da chave publica no sistema de arquivos.
-     */
-    public static final String PATH_CHAVE_PUBLICA = "C:/keys/";
 
     /**
      * Gera a chave que contém um par de chave Privada e Pública usando 1025
@@ -128,17 +132,21 @@ public class CriptografiaRSA {
      * public.key
      */
     public static void geraChave(String usuario) {
-        if(existeChavesNoSO(PATH_CHAVE_PUBLICA.concat(usuario).concat("public.key"), 
-                            PATH_CHAVE_PRIVADA.concat(usuario.concat("privatekey")))){
+        
+
+        if(existeChavesNoSO(PATH_CHAVE.concat(usuario).concat("public.key"), 
+                            PATH_CHAVE.concat(usuario.concat("privatekey")))){
             return;
         }
+
+        
         try {
             final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM);
             keyGen.initialize(2048);
             final KeyPair key = keyGen.generateKeyPair();
 
-            File chavePrivadaFile = new File(PATH_CHAVE_PRIVADA.concat(usuario.concat("private.key")));
-            File chavePublicaFile = new File(PATH_CHAVE_PUBLICA.concat(usuario).concat("public.key"));
+            File chavePrivadaFile = new File(PATH_CHAVE.concat(usuario.concat("private.key")));
+            File chavePublicaFile = new File(PATH_CHAVE.concat(usuario).concat("public.key"));
 
             // Cria os arquivos para armazenar a chave Privada e a chave Publica
             if (chavePrivadaFile.getParentFile() != null) {
